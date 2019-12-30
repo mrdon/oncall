@@ -1,5 +1,5 @@
 prod:
-    plugins: python,logfile
+#    plugins: python,logfile
     chdir: /home/oncall/source
     socket: /home/oncall/var/run/uwsgi.sock
     chmod-socket: 666
@@ -13,9 +13,15 @@ prod:
     stats: /home/oncall/var/run/uwsgi_stats.sock
     pidfile: /home/oncall/var/run/uwsgi.pid
     module: oncall.app:get_wsgi_app()
-    virtualenv: /home/oncall/env
     pyargv: /home/oncall/config/config.yaml
     buffer-size: 32768
+
+    attach-daemon: oncall-notifier /home/oncall/config/config.yaml
+    attach-daemon2: cmd=/usr/sbin/nginx -c /home/oncall/daemons/nginx.conf,pidfile=/home/oncall/var/run/nginx.pid
+#    attach-daemon2:
+#      - cmd=/usr/sbin/nginx -c /home/oncall/daemons/nginx.conf,pidfile=/home/oncall/var/run/nginx.pid
+#      - cmd=/home/oncall/env/bin/oncall-notifier /home/oncall/config/config.yaml
+#      - cmd=/home/oncall/env/bin/oncall-scheduler /home/oncall/config/config.yaml
 
     # Enable memory reporting
     memory-report: true
@@ -28,16 +34,13 @@ prod:
     log-slow: 1500
 
     # access log
-    req-logger: file:/home/oncall/var/log/uwsgi/access.log
+#    req-logger: file:/home/oncall/var/log/uwsgi/access.log
 
     # error log
-    logger: file:/home/oncall/var/log/uwsgi/error.log
+#    logger: file:/home/oncall/var/log/uwsgi/error.log
 
     # put timestamp in the error log
     logdate: true
 
     # control nginx and oncall scheduler/notifier
-    attach-daemon2:
-      - cmd=/usr/sbin/nginx -c /home/oncall/daemons/nginx.conf,pidfile=/home/oncall/var/run/nginx.pid
-      - cmd=/home/oncall/env/bin/oncall-notifier /home/oncall/config/config.yaml
-      - cmd=/home/oncall/env/bin/oncall-scheduler /home/oncall/config/config.yaml
+

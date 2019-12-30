@@ -1,14 +1,25 @@
 version: '3'
 
 services:
-  oncall-web:
+  web:
     build: .
     ports:
       - "8080:8080"
     environment:
        - DOCKER_DB_BOOTSTRAP=1
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./configs:/home/oncall/config
+      - ./ops:/home/oncall/ops
+      - ./db:/home/oncall/db
+      - ./src:/home/oncall/src
+      - ./ops/config/systemd:/etc/systemd/system
+      - ./ops/daemons:/home/oncall/daemons
+      - ./ops/daemons/uwsgi-docker.yaml:/home/oncall/daemons/uwsgi.yaml
 
-  oncall-mysql:
-    image: mysql:5.7
+  db:
+    image: mariadb:10.4
     environment:
       - MYSQL_ROOT_PASSWORD=1234
